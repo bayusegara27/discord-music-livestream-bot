@@ -1,4 +1,4 @@
-# 🎶 Discord Music Stream Bot 🎶
+# 🎶 Discord Music Video livestream Bot 🎶
 
 A powerful and reliable Discord bot for streaming from YouTube directly or video url to your voice channel. Built with Bun and Node.js for maximum performance.
 
