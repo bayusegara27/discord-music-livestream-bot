@@ -1,16 +1,14 @@
 # 🎶 Discord Music Stream Bot 🎶
 
-A powerful and reliable Discord bot for streaming high-quality audio from YouTube directly to your voice channel. Built with Bun and Node.js for maximum performance.
+A powerful and reliable Discord bot for streaming from YouTube directly or video url to your voice channel. Built with Bun and Node.js for maximum performance.
 
 ---
 
 ## ✨ Features
 
-- **High-Quality Audio:** Streams audio using `yt-dlp` and `ffmpeg` for a smooth listening experience.
 - **YouTube Integration:** Easily play any video or playlist from YouTube.
 - **Easy to Use:** Simple commands to get the music playing in seconds.
-- **High Performance:** Built on top of Bun, the super-fast, all-in-one JavaScript runtime.
-
+  
 ---
 
 ## 🚀 Getting Started Guide
@@ -20,16 +18,15 @@ Follow these steps to get your own instance of the bot running.
 ### Prerequisites
 
 - [Bun](https://bun.sh/) installed on your system.
-- A Discord Bot Token. You can get one from the [Discord Developer Portal](https://discord.com/developers/applications).
+- A Discord Bot Token. You can get one from the [tutorial](https://www.reddit.com/r/Discord_selfbots/comments/1koj2mh/comment/mu6fq5t/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button).
 - `yt-dlp.exe` placed inside the `scripts/` directory.
 
 ### Installation & Setup
 
 1.  **Clone the Repository (or use your local copy):**
     ```bash
-    # This will be the command after the repository is created
-    # git clone https://github.com/bayusegara27/discord-music-stream-bot.git
-    # cd discord-music-stream-bot
+    git clone https://github.com/bayusegara27/discord-music-stream-bot.git
+    cd discord-music-stream-bot
     ```
 
 2.  **Install Dependencies:**
@@ -64,6 +61,7 @@ _(You can add details about your specific bot commands here later. For example:)
 - `/play <youtube_url_or_keywords>`: Plays a song from YouTube.
 - `/stop`: Stops the music and clears the queue.
 - `/skip`: Skips the currently playing song.
+- and more.
 
 ---
 
