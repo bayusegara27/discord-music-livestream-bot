@@ -56,7 +56,6 @@ Follow these steps to get your own instance of the bot running.
 
 ## 🤖 Bot Commands
 
-_(You can add details about your specific bot commands here later. For example:)_
 
 - `/play <youtube_url_or_keywords>`: Plays a song from YouTube.
 - `/stop`: Stops the music and clears the queue.
