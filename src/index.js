@@ -63,7 +63,6 @@ async function sendReply(message, emoji, title, description) {
 }
 
 // --- Core Playback & Queue Logic ---
-
 async function processQueue(message) {
     while (queue.length > 0) {
         if (streamState.manualStop) {
@@ -114,7 +113,6 @@ async function executeStream(song, message) {
     controller = new AbortController();
     streamer.client.user?.setActivity(status_watch(song.title));
 
-    // Fungsi pembantu untuk pembersihan file yang aman
     const cleanupTempFile = (filePath, process) => {
         return new Promise((resolve) => {
             if (!filePath) return resolve();
@@ -125,14 +123,12 @@ async function executeStream(song, message) {
                         fs.unlinkSync(filePath);
                         logger.info(`Successfully deleted temp file: ${filePath}`);
                     } catch (cleanupError) {
-                        // Jika masih gagal, log sebagai warning, karena ini tidak kritis
                         logger.warn(`Could not delete temp file on final attempt: ${cleanupError.message}`);
                     }
                 }
                 resolve();
             };
 
-            // Jika proses ffmpeg ada dan belum keluar, tunggu sampai benar-benar berhenti
             if (process && process.exitCode === null) {
                 logger.info("FFmpeg process is still running. Waiting for it to exit before deleting temp file...");
                 process.on('close', deleteFile);
@@ -141,7 +137,6 @@ async function executeStream(song, message) {
                     deleteFile();
                 });
             } else {
-                // Jika proses sudah tidak ada, coba hapus langsung
                 deleteFile();
             }
         });
@@ -151,7 +146,6 @@ async function executeStream(song, message) {
         if (song.type === 'youtube') {
             if (song.isLive) {
                 logger.info(`YouTube video is live: ${song.title}`);
-                // Untuk stream live, kita tidak menggunakan yt-dlp untuk download, tetapi untuk mendapatkan URL stream
                 const streamUrl = await youtube.getStreamUrl(song.source, true);
                 if (streamUrl) {
                     inputForFfmpeg = streamUrl;
@@ -176,11 +170,9 @@ async function executeStream(song, message) {
             if (!controller.signal.aborted) {
                 if (err.message.includes('SIGKILL')) return;
                 logger.error(`FFmpeg error: ${err.message}`);
-                // Jangan abort di sini untuk menghindari race condition, biarkan playStream yang menangani
             }
         });
         
-        // Menunggu streaming selesai atau dihentikan
         await playStream(ffmpegOutput, streamer, undefined, controller.signal);
 
     } catch (error) {
@@ -191,16 +183,13 @@ async function executeStream(song, message) {
             logger.info(`Stream for "${song.title}" was aborted as intended.`);
         }
     } finally {
-        // --- LOGIKA PENGHAPUSAN BARU ---
-        // Gunakan fungsi cleanup yang aman, yang menunggu ffmpeg selesai.
         await cleanupTempFile(tempFilePath, currentFfmpegProcess);
         currentFfmpegProcess = null;
-        tempFilePath = null; // Pastikan path dibersihkan setelah dihapus
+        tempFilePath = null;
     }
 }
 
 // --- Discord Event Handlers ---
-
 streamer.client.on("ready", async () => {
     logger.info(`${streamer.client.user.tag} is ready`);
     streamer.client.user?.setActivity(status_idle());
@@ -250,7 +239,6 @@ streamer.client.on('messageCreate', async (message) => {
                     if (!initialDetails) throw new Error('Could not get initial information for this YouTube video.');
                     
                     logger.info(`Got title: "${initialDetails.title}". Searching for clean URL...`);
-                    // BUG FIX: Mengganti YoutubeAndGetPageUrl menjadi YoutubeAndGetPageUrl
                     const searchResults = await YoutubeAndGetPageUrl(initialDetails.title);
                     if (!searchResults || !searchResults.pageUrl) {
                         throw new Error(`Could not find a clean URL for "${initialDetails.title}".`);
@@ -270,7 +258,6 @@ streamer.client.on('messageCreate', async (message) => {
                     sendReply(message, '👍', 'Added to Queue', `\`${songInfo.title}\``);
 
                 } else if (validationType === 'playlist') {
-                    // ... (tidak ada perubahan di blok ini)
                     logger.info(`[YT-PLAYLIST] Identified a YouTube playlist link: ${query}`);
                     const playlistVideos = await youtube.getPlaylistInfo(query);
                     if (!playlistVideos || playlistVideos.length === 0) throw new Error('Could not get videos from this playlist.');
@@ -282,7 +269,6 @@ streamer.client.on('messageCreate', async (message) => {
                     sendReply(message, '👍', 'Playlist Added', `Added **${playlistVideos.length}** videos to the queue.`);
 
                 } else if (urlMatch) {
-                    // ... (tidak ada perubahan di blok ini)
                     logger.info(`[DIRECT-LINK] Identified a direct link: ${query}`);
                     let title = 'Direct Link';
                     try {
@@ -297,7 +283,6 @@ streamer.client.on('messageCreate', async (message) => {
 
                 } else {
                     logger.info(`[SEARCH] Not a URL. Searching YouTube for: "${query}"`);
-                    // BUG FIX: Mengganti YoutubeAndGetPageUrl menjadi YoutubeAndGetPageUrl
                     const searchResults = await YoutubeAndGetPageUrl(query);
                     if (!searchResults || !searchResults.pageUrl) {
                         throw new Error(`Video not found on YouTube for "${query}".`);
